@@ -36,62 +36,54 @@
         const startTime = Date.now();
 
         const bootSequence = [
-            { text: 'GRUB loading.', delay: 200 },
-            { text: 'GRUB loading..', delay: 200 },
-            { text: 'GRUB loading...', delay: 400 },
+            { text: 'GRUB loading...', delay: 150 },
+            { text: 'Booting \'Senzo13 GNU/Linux\'...', delay: 250 },
+            { text: '', delay: 50 },
+            { text: '[    0.000000] Linux version 6.1.0-senzo13-amd64 (gcc-12 (Debian 12.2.0-14) 12.2.0)', delay: 30 },
+            { text: '[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.1.0-senzo13-amd64 root=/dev/sda1 ro quiet', delay: 30 },
+            { text: '[    0.043218] x86/fpu: Supporting XSAVE feature 0x001: \'x87 floating point registers\'', delay: 25 },
+            { text: '[    0.102934] smpboot: CPU0: Intel(R) Core(TM) i7-13700K @ 5.40GHz (family: 0x6)', delay: 25 },
+            { text: '[    0.204817] Memory: 32685412K/33554432K available (16384K kernel code, 4096K rwdata)', delay: 25 },
+            { text: '[    0.310042] ACPI: RSDP 0x00000000000F0490 000024 (v02 VBOX  )', delay: 25 },
+            { text: '[    0.519233] PCI: Using configuration type 1 for base access', delay: 25 },
+            { text: '[    0.812534] NET: Registered PF_INET protocol family', delay: 25 },
+            { text: '[    1.023841] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.', delay: 30 },
+            { text: '[    1.294012] systemd[1]: Detected architecture x86-64.', delay: 25 },
+            { text: '[    1.294100] systemd[1]: Hostname set to <senzo13>.', delay: 25 },
+            { text: '[    1.412003] systemd[1]: Started Journal Service.', delay: 25 },
+            { text: '[    1.587234] systemd[1]: Starting Network Manager...', delay: 40 },
+            { text: '[    1.692044] systemd[1]: Started Network Manager.', delay: 25 },
+            { text: '[    1.923845] systemd[1]: Started OpenSSH server.', delay: 25 },
+            { text: '[    2.104923] systemd[1]: Started nginx HTTP Server.', delay: 60 },
+            { text: '', delay: 50 },
+            { text: 'Debian GNU/Linux 12 senzo13 tty1', delay: 100 },
+            { text: '', delay: 50 },
+            { text: 'senzo13 login: guest (automatic login)', delay: 200 },
             { text: '', delay: 100 },
-            { text: 'Booting \'Senzo13 GNU/Linux\'...', delay: 500 },
+            { text: 'Last login: ' + formatDate(new Date()) + ' from 192.168.1.42', delay: 150 },
             { text: '', delay: 100 },
-            { text: '[    0.000000] Linux version 6.1.0-senzo13-amd64 (gcc-12 (Debian 12.2.0-14) 12.2.0)', delay: 150 },
-            { text: '[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.1.0-senzo13-amd64 root=/dev/sda1 ro quiet', delay: 100 },
-            { text: '[    0.043218] x86/fpu: Supporting XSAVE feature 0x001: \'x87 floating point registers\'', delay: 80 },
-            { text: '[    0.102934] smpboot: CPU0: Intel(R) Core(TM) i7-13700K @ 5.40GHz (family: 0x6)', delay: 80 },
-            { text: '[    0.103001] Performance Events: PEBS fmt4+-baseline, 32-deep LBR, full-width counters', delay: 80 },
-            { text: '[    0.204817] Memory: 32685412K/33554432K available (16384K kernel code, 4096K rwdata)', delay: 100 },
-            { text: '[    0.310042] ACPI: RSDP 0x00000000000F0490 000024 (v02 VBOX  )', delay: 80 },
-            { text: '[    0.415823] ACPI: XSDT 0x000000003FFF0030 00003C (v01 VBOX   VBOXXSDT)', delay: 80 },
-            { text: '[    0.519233] PCI: Using configuration type 1 for base access', delay: 80 },
-            { text: '[    0.678124] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x4e1822f7b12', delay: 80 },
-            { text: '[    0.812534] NET: Registered PF_INET protocol family', delay: 80 },
-            { text: '[    1.023841] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.', delay: 100 },
-            { text: '[    1.294012] systemd[1]: Detected architecture x86-64.', delay: 80 },
-            { text: '[    1.294100] systemd[1]: Hostname set to <senzo13>.', delay: 100 },
-            { text: '[    1.412003] systemd[1]: Started Journal Service.', delay: 80 },
-            { text: '[    1.587234] systemd[1]: Starting Network Manager...', delay: 150 },
-            { text: '[    1.692044] systemd[1]: Started Network Manager.', delay: 80 },
-            { text: '[    1.805123] systemd[1]: Starting OpenSSH server...', delay: 100 },
-            { text: '[    1.923845] systemd[1]: Started OpenSSH server.', delay: 80 },
-            { text: '[    2.004012] systemd[1]: Starting nginx HTTP Server...', delay: 150 },
-            { text: '[    2.104923] systemd[1]: Started nginx HTTP Server.', delay: 200 },
-            { text: '', delay: 100 },
-            { text: 'Debian GNU/Linux 12 senzo13 tty1', delay: 200 },
-            { text: '', delay: 100 },
-            { text: 'senzo13 login: guest (automatic login)', delay: 400 },
+            { typed: true, text: 'curl -sI https://senzo13.dev/this-page', delay: 300 },
             { text: '', delay: 200 },
-            { text: 'Last login: ' + formatDate(new Date()) + ' from 192.168.1.42', delay: 300 },
-            { text: '', delay: 200 },
-            { typed: true, text: 'curl -sI https://senzo13.dev/this-page', delay: 600 },
-            { text: '', delay: 400 },
             { text: 'HTTP/2 404', class: 'error-bold' },
-            { text: 'server: nginx/1.24.0', delay: 60 },
-            { text: 'date: ' + new Date().toUTCString(), delay: 60 },
-            { text: 'content-type: text/html; charset=UTF-8', delay: 60 },
-            { text: 'x-powered-by: coffee-and-code', delay: 60 },
-            { text: '', delay: 300 },
-            { typed: true, text: 'cat /var/www/errors/404.txt', delay: 600 },
-            { text: '', delay: 300 },
+            { text: 'server: nginx/1.24.0', delay: 30 },
+            { text: 'date: ' + new Date().toUTCString(), delay: 30 },
+            { text: 'content-type: text/html; charset=UTF-8', delay: 30 },
+            { text: 'x-powered-by: coffee-and-code', delay: 30 },
+            { text: '', delay: 150 },
+            { typed: true, text: 'cat /var/www/errors/404.txt', delay: 300 },
+            { text: '', delay: 150 },
             { text: '    _  _    ___  _  _  ', class: 'ascii-art' },
             { text: '   | || |  / _ \\| || | ', class: 'ascii-art' },
             { text: '   | || |_| | | | || |_', class: 'ascii-art' },
             { text: '   |__   _| | | |__   _|', class: 'ascii-art' },
             { text: '      | | | |_| |  | |  ', class: 'ascii-art' },
             { text: '      |_|  \\___/   |_|  ', class: 'ascii-art' },
-            { text: '', delay: 200 },
+            { text: '', delay: 100 },
             { text: '   PAGE NOT FOUND', class: 'error-bold' },
             { text: '   The requested URL was not found on this server.', class: 'dim' },
-            { text: '', delay: 300 },
+            { text: '', delay: 150 },
             { text: '   Type "help" for a list of available commands.', class: 'info' },
-            { text: '', delay: 100 },
+            { text: '', delay: 50 },
         ];
 
         function formatDate(d) {
@@ -217,7 +209,7 @@
                         span.textContent += text[i];
                         i++;
                         scrollToBottom();
-                        setTimeout(type, 25 + Math.random() * 45);
+                        setTimeout(type, 15 + Math.random() * 25);
                     } else {
                         resolve();
                     }
@@ -240,7 +232,7 @@
                     }, step.delay || 60);
                 });
                 if (step.typed) {
-                    await new Promise(r => setTimeout(r, 500));
+                    await new Promise(r => setTimeout(r, 250));
                 }
             }
             inputLine.style.display = 'flex';
