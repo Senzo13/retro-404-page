@@ -4,6 +4,8 @@
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 
+<img src="retro-404.png" alt="Retro 404 Terminal Preview" width="100%"/>
+
 A retro hacker-style terminal page featuring a typewriter text animation effect. Green text scrolls character by character onto a black terminal screen, simulating a classic shell interface.
 
 ## Features
