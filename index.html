@@ -3,43 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>></text></svg>">
 </head>
 <body>
-    
-        <div id="bloc" class="text" id="chibre">
-            <p></p>
-            <input autofocus>
+    <div class="scanlines"></div>
+    <div class="crt">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="btn-close"></span>
+                    <span class="btn-minimize"></span>
+                    <span class="btn-maximize"></span>
+                </div>
+                <div class="terminal-title">guest@senzo13: ~</div>
+            </div>
+            <div class="terminal-body" id="terminal">
+                <div id="output"></div>
+                <div class="input-line" id="input-line" style="display:none;">
+                    <span class="prompt">guest@senzo13<span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-dollar">$</span>&nbsp;</span>
+                    <input type="text" id="cmd-input" autofocus autocomplete="off" spellcheck="false">
+                </div>
+            </div>
         </div>
+    </div>
 
-        <script>
+    <script>
+        const output = document.getElementById('output');
+        const inputLine = document.getElementById('input-line');
+        const cmdInput = document.getElementById('cmd-input');
+        const startTime = Date.now();
 
-    
-            var word = "SHELL 3.0 Initialised...<br> Je suis un Anonymous, et je possède la puissance. <br> J'aimerais te faire entrer dans le cercle<br> Des puissant codeur de notre ère, te sens-tu prêt ? <br/> [oui] ; [non] ?"; //Text affiché sur la navigateur
-            var nb_car = word.length; // nombre de caractère dans la var word
-            var tab = word.split(""); // tableau qui reprend toutes les lettres de la var
-            texte = new Array; // Permet de faire mettre le tab dans un tableau texte pour faire un break
-            var txt = '';
-            var nb_msg = nb_car - 1; // Stop à la dernière lettre
-            for (i=0; i<nb_car; i++) { // Boucle qui pars de 0 et incrémente +1 lettre 
-            texte[i] = txt+tab[i]; // Prend les éléments du txt et tableau
-            var txt = texte[i]; // Prend chaque lettre et les affiche côte à côte sinon elle se chevauche l'une sur l'autre
+        const bootSequence = [
+            { text: 'GRUB loading.', delay: 200 },
+            { text: 'GRUB loading..', delay: 200 },
+            { text: 'GRUB loading...', delay: 400 },
+            { text: '', delay: 100 },
+            { text: 'Booting \'Senzo13 GNU/Linux\'...', delay: 500 },
+            { text: '', delay: 100 },
+            { text: '[    0.000000] Linux version 6.1.0-senzo13-amd64 (gcc-12 (Debian 12.2.0-14) 12.2.0)', delay: 150 },
+            { text: '[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-6.1.0-senzo13-amd64 root=/dev/sda1 ro quiet', delay: 100 },
+            { text: '[    0.043218] x86/fpu: Supporting XSAVE feature 0x001: \'x87 floating point registers\'', delay: 80 },
+            { text: '[    0.102934] smpboot: CPU0: Intel(R) Core(TM) i7-13700K @ 5.40GHz (family: 0x6)', delay: 80 },
+            { text: '[    0.103001] Performance Events: PEBS fmt4+-baseline, 32-deep LBR, full-width counters', delay: 80 },
+            { text: '[    0.204817] Memory: 32685412K/33554432K available (16384K kernel code, 4096K rwdata)', delay: 100 },
+            { text: '[    0.310042] ACPI: RSDP 0x00000000000F0490 000024 (v02 VBOX  )', delay: 80 },
+            { text: '[    0.415823] ACPI: XSDT 0x000000003FFF0030 00003C (v01 VBOX   VBOXXSDT)', delay: 80 },
+            { text: '[    0.519233] PCI: Using configuration type 1 for base access', delay: 80 },
+            { text: '[    0.678124] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x4e1822f7b12', delay: 80 },
+            { text: '[    0.812534] NET: Registered PF_INET protocol family', delay: 80 },
+            { text: '[    1.023841] EXT4-fs (sda1): mounted filesystem with ordered data mode. Quota mode: none.', delay: 100 },
+            { text: '[    1.294012] systemd[1]: Detected architecture x86-64.', delay: 80 },
+            { text: '[    1.294100] systemd[1]: Hostname set to <senzo13>.', delay: 100 },
+            { text: '[    1.412003] systemd[1]: Started Journal Service.', delay: 80 },
+            { text: '[    1.587234] systemd[1]: Starting Network Manager...', delay: 150 },
+            { text: '[    1.692044] systemd[1]: Started Network Manager.', delay: 80 },
+            { text: '[    1.805123] systemd[1]: Starting OpenSSH server...', delay: 100 },
+            { text: '[    1.923845] systemd[1]: Started OpenSSH server.', delay: 80 },
+            { text: '[    2.004012] systemd[1]: Starting nginx HTTP Server...', delay: 150 },
+            { text: '[    2.104923] systemd[1]: Started nginx HTTP Server.', delay: 200 },
+            { text: '', delay: 100 },
+            { text: 'Debian GNU/Linux 12 senzo13 tty1', delay: 200 },
+            { text: '', delay: 100 },
+            { text: 'senzo13 login: guest (automatic login)', delay: 400 },
+            { text: '', delay: 200 },
+            { text: 'Last login: ' + formatDate(new Date()) + ' from 192.168.1.42', delay: 300 },
+            { text: '', delay: 200 },
+            { typed: true, text: 'curl -sI https://senzo13.dev/this-page', delay: 600 },
+            { text: '', delay: 400 },
+            { text: 'HTTP/2 404', class: 'error-bold' },
+            { text: 'server: nginx/1.24.0', delay: 60 },
+            { text: 'date: ' + new Date().toUTCString(), delay: 60 },
+            { text: 'content-type: text/html; charset=UTF-8', delay: 60 },
+            { text: 'x-powered-by: coffee-and-code', delay: 60 },
+            { text: '', delay: 300 },
+            { typed: true, text: 'cat /var/www/errors/404.txt', delay: 600 },
+            { text: '', delay: 300 },
+            { text: '    _  _    ___  _  _  ', class: 'ascii-art' },
+            { text: '   | || |  / _ \\| || | ', class: 'ascii-art' },
+            { text: '   | || |_| | | | || |_', class: 'ascii-art' },
+            { text: '   |__   _| | | |__   _|', class: 'ascii-art' },
+            { text: '      | | | |_| |  | |  ', class: 'ascii-art' },
+            { text: '      |_|  \\___/   |_|  ', class: 'ascii-art' },
+            { text: '', delay: 200 },
+            { text: '   PAGE NOT FOUND', class: 'error-bold' },
+            { text: '   The requested URL was not found on this server.', class: 'dim' },
+            { text: '', delay: 300 },
+            { text: '   Type "help" for a list of available commands.', class: 'info' },
+            { text: '', delay: 100 },
+        ];
+
+        function formatDate(d) {
+            const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return days[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + String(d.getDate()).padStart(2,' ') + ' ' +
+                   String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' +
+                   String(d.getSeconds()).padStart(2,'0') + ' ' + d.getFullYear();
+        }
+
+        const commands = {
+            help: [
+                { text: '' },
+                { text: '  Available commands:', class: 'info' },
+                { text: '' },
+                { text: '    help       Show this help message' },
+                { text: '    whoami     About the developer' },
+                { text: '    projects   List projects' },
+                { text: '    skills     Technical skills' },
+                { text: '    contact    Contact information' },
+                { text: '    neofetch   System information' },
+                { text: '    date       Current date and time' },
+                { text: '    uptime     System uptime' },
+                { text: '    home       Open GitHub profile' },
+                { text: '    clear      Clear terminal' },
+                { text: '' },
+            ],
+            whoami: [
+                { text: '' },
+                { text: '  Lorenzo Giralt', class: 'info' },
+                { text: '  Full-Stack Developer | Epitech M2' },
+                { text: '  Based in South of France' },
+                { text: '  Building cool stuff since day one.' },
+                { text: '' },
+            ],
+            projects: [
+                { text: '' },
+                { text: '  NAME              STACK              LIVE', class: 'info' },
+                { text: '  ────────────────  ─────────────────  ──────────────────────────────' },
+                { text: '  devkit            HTML/CSS/JS        senzo13.github.io/devkit' },
+                { text: '  codesnap          HTML/CSS/JS        senzo13.github.io/codesnap' },
+                { text: '  pomodoro-timer    HTML/CSS/JS        senzo13.github.io/pomodoro-timer' },
+                { text: '  CryptoCharts      React/TypeScript   github.com/Senzo13/CryptoCharts' },
+                { text: '  Leafline          React Native       github.com/Senzo13/Leafline' },
+                { text: '  webfury           Next.js/React      github.com/Senzo13/webfury' },
+                { text: '  vue-time-manager  Vue.js/Elixir      github.com/Senzo13/vue-time-manager' },
+                { text: '' },
+            ],
+            skills: [
+                { text: '' },
+                { text: '  CATEGORY          TECHNOLOGIES', class: 'info' },
+                { text: '  ────────────────  ──────────────────────────────────────────────' },
+                { text: '  Frontend          React, Angular, Vue, Svelte, Next.js, Tailwind' },
+                { text: '  Backend           Node.js, Express, NestJS, PHP, Symfony, Elixir' },
+                { text: '  Languages         TypeScript, JavaScript, Kotlin, Python, C++' },
+                { text: '  Databases         PostgreSQL, MySQL, MongoDB, Firebase' },
+                { text: '  DevOps            Docker, AWS, Linux, Git, GitHub Actions' },
+                { text: '' },
+            ],
+            contact: [
+                { text: '' },
+                { text: '  GitHub     https://github.com/Senzo13', class: 'link' },
+                { text: '  LinkedIn   https://linkedin.com/in/lorenzo-giralt', class: 'link' },
+                { text: '' },
+            ],
+            neofetch: [
+                { text: '' },
+                { text: '         .~~.   .~~.      guest@senzo13', class: 'neofetch' },
+                { text: '        /. . \\ /. . \\     ─────────────────', class: 'neofetch' },
+                { text: '       |  _   |  _   |    OS: Senzo13 GNU/Linux x86_64', class: 'neofetch' },
+                { text: '       | (_)  | (_)  |    Host: GitHub Pages', class: 'neofetch' },
+                { text: '        \\  __/ \\  __/     Kernel: 6.1.0-senzo13-amd64', class: 'neofetch' },
+                { text: '       __\\|  ___\\|  __    Uptime: since Jul 2019', class: 'neofetch' },
+                { text: '      |  ______  ____|    Packages: npm, composer, pip', class: 'neofetch' },
+                { text: '      | |      | |        Shell: bash 5.2.15', class: 'neofetch' },
+                { text: '      |_|      |_|        Terminal: retro-404 v2.0', class: 'neofetch' },
+                { text: '                          CPU: Code @ MaxFreq', class: 'neofetch' },
+                { text: '   ██ ██ ██ ██ ██ ██      Memory: 404 MiB / ∞ MiB', class: 'neofetch' },
+                { text: '' },
+            ],
+            date: [
+                { text: '' },
+                { text: '  ' + new Date().toString() },
+                { text: '' },
+            ],
+            uptime: [
+                { text: '' },
+                { text: '   ' + String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0') + ':' + String(new Date().getSeconds()).padStart(2,'0') + ' up ' + Math.floor(Math.random() * 200 + 50) + ' days, ' + Math.floor(Math.random() * 24) + ':' + String(Math.floor(Math.random() * 60)).padStart(2, '0') + ',  1 user,  load average: 0.42, 0.38, 0.31' },
+                { text: '' },
+            ],
+        };
+
+        const cmdHistory = [];
+        let historyIndex = -1;
+
+        function addLine(text, className) {
+            const line = document.createElement('div');
+            line.className = 'line' + (className ? ' ' + className : '');
+            line.textContent = text || '\u00A0';
+            output.appendChild(line);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const body = document.querySelector('.terminal-body');
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function typeText(text) {
+            return new Promise(resolve => {
+                const line = document.createElement('div');
+                line.className = 'line';
+                const prompt = document.createElement('span');
+                prompt.innerHTML = '<span class="prompt-user">guest@senzo13</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-dollar">$</span> ';
+                line.appendChild(prompt);
+                const span = document.createElement('span');
+                line.appendChild(span);
+                output.appendChild(line);
+
+                let i = 0;
+                function type() {
+                    if (i < text.length) {
+                        span.textContent += text[i];
+                        i++;
+                        scrollToBottom();
+                        setTimeout(type, 25 + Math.random() * 45);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
+        async function runBootSequence() {
+            for (const step of bootSequence) {
+                await new Promise(resolve => {
+                    setTimeout(async () => {
+                        if (step.typed) {
+                            await typeText(step.text);
+                            resolve();
+                        } else {
+                            addLine(step.text, step.class);
+                            resolve();
+                        }
+                    }, step.delay || 60);
+                });
+                if (step.typed) {
+                    await new Promise(r => setTimeout(r, 500));
+                }
             }
-            
-            // //// FUNCTION Permettant de lancer le défilement du code Js ////
-            word = 0; // Permet de prendre les lettres one by one en affichage
-             function Message() {
-             var phrase = document.getElementById('bloc').childNodes; // Prend l'élément enfant du bloc parent soit class text
-             phrase[1].innerHTML = texte[word]; 
-             word++; // incrémente +1 
-             if(word >= texte.length) // Si le nbre de lettre est inférieur au text, alors il continue 
-             word = nb_msg;
-            }
-             if(document.getElementById)
-             setInterval("Message()",40); // Permet de faire un intervalle dans l'affichage de lettre vitesse 100.
-        </script>
+            inputLine.style.display = 'flex';
+            cmdInput.focus();
+        }
 
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function handleCommand(cmd) {
+            const promptLine = document.createElement('div');
+            promptLine.className = 'line';
+            promptLine.innerHTML = '<span class="prompt-user">guest@senzo13</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-dollar">$</span> ' + escapeHtml(cmd);
+            output.appendChild(promptLine);
+
+            const trimmed = cmd.trim().toLowerCase();
+
+            if (trimmed !== '') {
+                cmdHistory.unshift(cmd);
+                historyIndex = -1;
+            }
+
+            if (trimmed === '') {
+                // empty
+            } else if (trimmed === 'clear') {
+                output.innerHTML = '';
+                return;
+            } else if (trimmed === 'home') {
+                addLine('');
+                addLine('  Redirecting to github.com/Senzo13...', 'info');
+                addLine('');
+                setTimeout(() => window.open('https://github.com/Senzo13', '_blank'), 800);
+            } else if (trimmed === 'sudo rm -rf /' || trimmed === 'sudo rm -rf /*') {
+                addLine('');
+                addLine('  Nice try ;)', 'error-bold');
+                addLine('');
+            } else if (trimmed === 'ls') {
+                addLine('');
+                addLine('  404.html  errors.log  index.html  robots.txt  style.css', 'info');
+                addLine('');
+            } else if (trimmed === 'pwd') {
+                addLine('');
+                addLine('  /var/www/senzo13.dev');
+                addLine('');
+            } else if (trimmed === 'cat errors.log') {
+                addLine('');
+                addLine('  [ERROR] 404 - You are here.', 'error-bold');
+                addLine('  [WARN]  This page does not exist.', 'warning');
+                addLine('  [INFO]  But you can explore with "help".', 'info');
+                addLine('');
+            } else if (trimmed.startsWith('echo ')) {
+                addLine('  ' + cmd.trim().substring(5));
+            } else if (commands[trimmed]) {
+                commands[trimmed].forEach(item => {
+                    addLine(item.text, item.class);
+                });
+            } else {
+                addLine('');
+                addLine('  -bash: ' + escapeHtml(trimmed.split(' ')[0]) + ': command not found', 'error');
+                addLine('  Type "help" for available commands.', 'dim');
+                addLine('');
+            }
+
+            scrollToBottom();
+        }
+
+        cmdInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleCommand(cmdInput.value);
+                cmdInput.value = '';
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex < cmdHistory.length - 1) {
+                    historyIndex++;
+                    cmdInput.value = cmdHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    cmdInput.value = cmdHistory[historyIndex];
+                } else {
+                    historyIndex = -1;
+                    cmdInput.value = '';
+                }
+            } else if (e.key === 'l' && e.ctrlKey) {
+                e.preventDefault();
+                output.innerHTML = '';
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                const partial = cmdInput.value.trim().toLowerCase();
+                const allCmds = [...Object.keys(commands), 'clear', 'home', 'ls', 'pwd', 'echo'];
+                const match = allCmds.find(c => c.startsWith(partial));
+                if (match) cmdInput.value = match;
+            }
+        });
+
+        document.addEventListener('click', () => cmdInput.focus());
+        runBootSequence();
+    </script>
 </body>
 </html>
